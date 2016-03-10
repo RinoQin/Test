@@ -1,4 +1,4 @@
-package org.solr.demo.study_solr_demo;
+package org.solr.demo;
 
 import junit.framework.Test;
 import junit.framework.TestCase;

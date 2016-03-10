@@ -1,4 +1,4 @@
-package org.solr.demo.study_solr_demo;
+package org.solr.demo;
 
 /**
  * Hello world!
