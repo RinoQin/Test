@@ -7,6 +7,7 @@ import java.util.Collection;
 import java.util.List;
 
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrQuery.ORDER;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.impl.CommonsHttpSolrServer;
@@ -388,7 +389,6 @@ public class ServerTest {
         }
     }
 
-    @Test
     public void queryFacet() {
         SolrQuery params = new SolrQuery("*:*");
         // 结果分方面数，默认为1
@@ -414,5 +414,69 @@ public class ServerTest {
         } catch (SolrServerException e) {
             e.printStackTrace();
         }
+    }
+
+    /**
+     * 
+     * 功能描述: <br>
+     * 分方面查询、统计 分方面查询，可以统计关键字出现的次数，或做自动补全提示<br>
+     * 分方面查询在某些统计关键字的时候还是很有用的，可以统计关键字出现的次数，可以通过统计的关键字来搜索相关文档的信息。
+     * 
+     * @see [相关类/方法](可选)
+     * @since [产品/模块版本](可选)
+     */
+    @Test
+    public void facetQueryCase() {
+
+        SolrQuery params = new SolrQuery("*:*");
+
+        // 排序
+        params.addSortField("id", ORDER.asc);
+
+        params.setStart(0);
+        params.setRows(4);
+
+        try {
+            QueryResponse response = server.query(params);
+            SolrDocumentList list = response.getResults();
+            for (int i = 0; i < list.size(); i++) {
+                fail(list.get(i));
+            }
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+        }
+
+        params.setFacet(true).setQuery("*:*").setFacetMinCount(1).setFacetLimit(3).setFacetPrefix("in")
+                .addFacetField("manu").addFacetField("name");
+        try {
+            QueryResponse facetResponse = server.query(params);
+            SolrDocumentList facetlist = facetResponse.getResults();
+            fail("Query result nums: " + facetlist.getNumFound());
+            for (int i = 0; i < facetlist.size(); i++) {
+                fail(facetlist.get(i));
+            }
+            fail("All facet filed result: ");
+            // 输出各方面信息
+            List<FacetField> facets = facetResponse.getFacetFields();
+            fail("facets: " + facets);
+            for (FacetField facet : facets) {
+                fail("facet: " + facet);
+                List<Count> facetCounts = facet.getValues();
+                for (Count count : facetCounts) {
+                    fail("valuse: " + count.getName() + ":" + count.getCount());
+                    fail("facetfield: " + count.getFacetField());
+                }
+            }
+            fail("Search facet [name] filed result: ");
+            FacetField facetField = facetResponse.getFacetField("name");
+            List<Count> fieldCounts = facetField.getValues();
+            for (Count count : fieldCounts) {
+                fail("valuse: " + count.getName() + ":" + count.getCount());
+                fail("facetfield: " + count.getFacetField());
+            }
+        } catch (SolrServerException e) {
+            e.printStackTrace();
+        }
+
     }
 }
