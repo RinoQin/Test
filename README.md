@@ -1,6 +1,6 @@
 ﻿# Test
 这是个测试项目
-#
+
 
 
 配置Solr
@@ -38,3 +38,4 @@ solrhome目录下的solr.xml文件进行配置
 
 配置每个code的schema.xml，使每个实例都能支持更多Type和Field，
 建设统一的公共的词库目录E:\apache-tomcat-7.0.59\solr\words
+#
