@@ -32,11 +32,12 @@ public class ServerTest {
     private SolrServer server;
     private CommonsHttpSolrServer httpServer;
 
-    private static final String DEFAULT_URL = "http://localhost:8080/solr/";
+    private static final String DEFAULT_URL = "http://localhost:8080/solr/A";
 
     @Before
     public void init() {
         try {
+            // server = new CommonsHttpSolrServer(DEFAULT_URL);
             server = new CommonsHttpSolrServer(DEFAULT_URL);
             httpServer = new CommonsHttpSolrServer(DEFAULT_URL);
         } catch (MalformedURLException e) {
@@ -64,6 +65,7 @@ public class ServerTest {
         fail(server);
         fail(httpServer);
         query("solr");
+        System.out.println("*******************");
     }
 
     /**
@@ -249,6 +251,25 @@ public class ServerTest {
         }
     }
 
+    @Test
+    public void removeAll() {
+        remove("*:*");
+    }
+
+    public void remove(String queryString) {
+        try {
+            server.deleteByQuery(queryString);
+            server.commit();
+        } catch (SolrServerException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        } catch (IOException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+
+    }
+
     /**
      * 功能描述: <br>
      * 其他server相关方法测试
@@ -425,7 +446,7 @@ public class ServerTest {
      * @see [相关类/方法](可选)
      * @since [产品/模块版本](可选)
      */
-    @Test
+
     public void facetQueryCase() {
 
         SolrQuery params = new SolrQuery("*:*");
